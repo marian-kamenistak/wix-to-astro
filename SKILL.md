@@ -5,7 +5,7 @@ description: Migrate, rebuild, duplicate, or clone a website from Wix (or any pa
 
 # Wix → Astro migration
 
-Version 1.1 · 2026-08-09
+Version 1.3 · 2026-10-28
 
 > Distilled from two production migrations run with this exact method: engineeringleaders.io
 > and elc-conference.io. The second rebuilt 51 URLs in one overnight run and landed Lighthouse
@@ -65,13 +65,28 @@ These catch non-overlapping error classes; skipping one ships its whole class:
   (rendered boxes win over recon tables), ALL background media including videos, and per-element
   scroll/interactive effects against the original's source.
 
-### 5. Owner review — `references/playbook.md` Step 4.7
+### 4b. Effects inventory — `references/motion-probe.js` + `references/parity-check.md` §8
+Static measurement misses everything that moves. Before the owner sees anything, read which
+transition effects the ORIGINAL uses and copy each one: run `motion-probe.js` on the live page
+(1512 and 390) and on the rebuild, and diff the two lists. It scrolls the page in steps and records
+every element whose opacity / transform / rotate / scale / clip-path / filter / scrollLeft changes
+(reveals, staggered fades, parallax, clip-path circle reveals, scroll-driven rotation), reads
+`document.getAnimations()` for infinite spins, and samples idle + in-view `scrollLeft` for
+auto-playing carousels. Also probe the HEADER at scrollY 0 / 10 / 100 (Wix pins a transparent header
+that turns `rgba(0,0,0,.7)` after ~10px) and any element's hover state. Every effect on live gets an
+equivalent on the rebuild (with `prefers-reduced-motion` off-switch); an effect that exists only on
+live is a parity bug, the same as a missing image.
+
+### 5. Owner review — `references/playbook.md` Step 4.7 + `references/parity-check.md`
 Even four automated passes miss a class of gap only the owner's eyes catch. Step 4.7 lists the
 recurring patterns (stretched media frames, pills built as circles, missed `<img>` background
-layers, flattened carousels, undercounted CTA rows…). When the owner flags something, verify with
-real data before changing code; when a claim doesn't hold up under measurement, show the evidence
-— but on perception calls (e.g. "add parallax"), the owner's perception decides
-(`references/interactivity.md`).
+layers, flattened carousels, undercounted CTA rows…). When the owner says "I see differences",
+run the **section-by-section parity check** (`references/parity-check.md`): section inventory on
+both pages at the owner's viewport, per-element probe on every section whose height differs,
+section-aligned side-by-side crops, and the four capture artefacts that fake a "missing"
+finding. When the owner flags something, verify with real data before changing code; when a
+claim doesn't hold up under measurement, show the evidence — but on perception calls (e.g.
+"add parallax"), the owner's perception decides (`references/interactivity.md`).
 
 ### 6. SEO + AI SEO — `references/seo.md`
 Make the rebuild *outperform* the Wix original, not just match it: production canonicals from day
@@ -91,6 +106,12 @@ period. Indexing pings only AFTER production returns 200 + indexable to bots.
   to something measured on the live site. If a value can't be recovered, ask the owner — never
   ship a guess. That includes copy: migrate typos verbatim and flag them; fixing content is the
   owner's call, not the migration's.
+- **If the original has a video, the rebuild has a video — playing the same way.** Measure
+  `autoplay` / `muted` / `loop` / `controls` / `paused` and `currentTime` on the live element and
+  reproduce that state with the real file; a poster image, or `preload="none"` + controls where
+  the original autoplays, reads to the owner as "you used a screenshot". Decorative background
+  effects (glows, gradient PNGs behind headings) are `<img>` or `background-image` layers on live
+  and get rebuilt as layers, not dropped (`references/parity-check.md` §6).
 - **A "no evidence found" result deserves the same scrutiny as a positive one.** An empty query
   result means "doesn't exist" or "my query was too narrow" — indistinguishable until you widen
   the search or check by another method.

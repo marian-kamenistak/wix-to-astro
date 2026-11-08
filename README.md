@@ -55,6 +55,12 @@ with one install line and one verify command.
 | `references/interactivity.md` | Extracting real animation recipes from a live site, the parallax gap, and why the owner's perception outranks your measurement |
 | `references/seo.md` | Structural SEO + AI SEO: staging noindex that survives a static build, a 5-type schema cap, tiered robots.txt, crawler-delivery verification, the Lighthouse ≥95 gate |
 | `references/setup.md` | Tooling prerequisites with verify commands |
+| `references/parity-check.md` | The owner-review pass: a section inventory on both pages, a per-element probe on every section whose height differs, section-aligned side-by-side crops, and the four capture artefacts that make present content look missing |
+| `references/motion-probe.js` | A browser script that scrolls the page and lists every element whose opacity, transform, clip-path or scroll position changes, plus infinite animations and auto-scrolling carousels. Run it on the original and on the rebuild, then diff the two lists |
+
+## What changed in 1.3 (October 2026)
+
+An owner review of elc-conference.io on 27 October found ten section-level gaps after the rebuild had already scored 100/100/100: a missing 40-photo gallery, a missing venue map, a logo wall with four columns instead of five. Version 1.3 adds the two checks built from that review, plus one rule: a video that plays on the original plays the same way on the rebuild.
 
 ## What it is not
 

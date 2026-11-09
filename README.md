@@ -20,6 +20,9 @@ missed. Those four gaps became Step 4.8 of the playbook, which is the honest pit
 skill: the method includes the failure modes, because it was corrected against a real site
 twice, first on engineeringleaders.io and then here.
 
+The full story of the first run, with the numbers and the 9 bugs the review still caught:
+[An AI agent moved engineeringleaders.io off Wix](https://www.marian.coach/blog/wix-to-astro-migration/).
+
 ## The method, in one paragraph
 
 Code-first, not screenshot-first. The agent extracts each section's rendered DOM and computed
